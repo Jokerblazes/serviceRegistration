@@ -108,8 +108,8 @@ public class RegistHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     private void addProvider(ChannelHandlerContext ctx,Provider provider,ProviderContainer container,EventLoopGroup group) {
-//        if (provider == null)
-//            return;
+        if (provider == null)
+            return;
         final ProviderPO providerPO = new ProviderPO(provider);
         Runnable runnable = createRunnable(providerPO,group);
         bossGroup.execute(runnable);

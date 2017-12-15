@@ -32,18 +32,18 @@ public class Client {
     private Channel channel;
 //    private EventLoopGroup bossGroup;
     private final RegistHandler registHandler;
-    private boolean init = false;
+//    private boolean init = false;
 
     public Client initProviderMap(List<String> serviceName) {
         ProviderContainer container = ProviderContainer.getInstance();
         container.initMap(serviceName);
-        init = true;
+//        init = true;
         return this;
     }
 
     public void connect(String host,int port) throws Exception {
-        if (!init)
-            throw new RuntimeException("请先调用initProviderMap方法！");
+//        if (!init)
+//            throw new RuntimeException("请先调用initProviderMap方法！");
         // 配置客户端NIO线程组
         try {
             Bootstrap b = new Bootstrap();

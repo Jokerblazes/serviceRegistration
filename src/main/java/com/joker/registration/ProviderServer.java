@@ -31,6 +31,7 @@ public class ProviderServer {
 		EventLoopGroup bossGroup = new NioEventLoopGroup();
 		EventLoopGroup workGroup = new NioEventLoopGroup();
 		Client client = new Client(ClientType.PROVIDE.value(),provider,workGroup,bossGroup);
+		
 		try {
 			bootstrap.group(bossGroup,workGroup)
 					.channel(NioServerSocketChannel.class)
