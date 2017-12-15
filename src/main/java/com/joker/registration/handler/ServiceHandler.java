@@ -10,7 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 服务提供者处理类
  * Created by joker on 2017/12/10.
+ * https://github.com/Jokerblazes/serviceRegistration.git
  */
 public class ServiceHandler extends SimpleChannelInboundHandler<Object> {
     private static final Logger logger = LoggerFactory.getLogger(ServiceHandler.class);
@@ -67,12 +69,10 @@ public class ServiceHandler extends SimpleChannelInboundHandler<Object> {
             message = reqMessage;
             message.setOpStatus(MessageType.Success.value());
         } else {
-            System.out.println("业务处理");
+            logger.info("业务处理！");
             message =  deal.handleAndReturnMessage((Message)msg,ctx);
         }
-        System.out.println("zheshi message : "+ message);
-        //业务
-
+        logger.info("处理结束 {}",message);
         if(message!=null) {
             ctx.writeAndFlush(message);
         }else {
@@ -82,14 +82,6 @@ public class ServiceHandler extends SimpleChannelInboundHandler<Object> {
     }
     //异常处理
     public  void  exceptionalProcess(ChannelHandlerContext ctx) {
-//		MyAttribute attachment = SessionManager.getAttachment(ctx);
-//		//System.out.println("异常处理"+attachment);
-//		if(attachment!=null) {
-//			SessionManager.removeUserSession(attachment.getId());
-//		}
-//		}else {
-//			//System.out.println("异常处理attachment");
-//		}
     }
 
 }

@@ -22,9 +22,9 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
 public class ProviderServer {
-	public void start(Provider provider, final ServiceDeal deal) {
-		final int registionPort = 8001;
-		final String registionIp = "127.0.0.1";
+	public void start(Provider provider, final ServiceDeal deal,String registionIp,int registionPort) {
+//		final int registionPort = 8001;
+//		final String registionIp = "127.0.0.1";
 
 		ServerBootstrap bootstrap = new ServerBootstrap();
 		//bossGroup监听端口线程组 workGroup工作线程组

@@ -1,27 +1,27 @@
 package com.joker.registration.runnable;
 
 import com.joker.agreement.entity.Message;
-import com.joker.registration.entity.MessageAction;
+import com.joker.registration.entity.MessageChannel;
 import com.joker.registration.entity.Storage;
 import io.netty.channel.ChannelHandlerContext;
-import rx.Observable;
-import rx.functions.Action1;
 
 
 /**
+ * 消费者-作为MessageChannel的消费者
  * Created by joker on 2017/12/12.
+ * https://github.com/Jokerblazes/serviceRegistration.git
  */
-public class MessageActionDestroyer implements Runnable {
-    private final Storage<MessageAction> storage;
+public class MessageChannelDestroyer implements Runnable {
+    private final Storage<MessageChannel> storage;
 
-    public MessageActionDestroyer(Storage<MessageAction> storage) {
+    public MessageChannelDestroyer(Storage<MessageChannel> storage) {
         this.storage = storage;
     }
 
 
     @Override
     public void run() {
-        MessageAction messageAction = null;
+        MessageChannel messageAction = null;
         try {
             messageAction = storage.take();
         } catch (InterruptedException e) {

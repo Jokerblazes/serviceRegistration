@@ -5,7 +5,9 @@ import com.joker.registration.container.ProviderSet;
 import com.joker.registration.dto.Provider;
 
 /**
+ * 轮询策略
  * Created by joker on 2017/12/8.
+ * https://github.com/Jokerblazes/serviceRegistration.git
  */
 public class PollingChooseStrategy implements ChooseStrategy {
     private int index = 0;

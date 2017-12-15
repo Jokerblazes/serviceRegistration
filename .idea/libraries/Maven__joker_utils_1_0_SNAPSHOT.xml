@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: joker:utils:1.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/joker/utils/1.0-SNAPSHOT/utils-1.0-20171215.053735-1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/joker/utils/1.0-SNAPSHOT/utils-1.0-20171215.053735-1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/joker/utils/1.0-SNAPSHOT/utils-1.0-20171215.053735-1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

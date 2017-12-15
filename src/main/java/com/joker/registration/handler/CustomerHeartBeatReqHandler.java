@@ -9,15 +9,21 @@ import com.joker.registration.entity.Storage;
 import com.joker.registration.runnable.MessageDestroyer;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 消费者心跳处理
  * Created by joker on 2017/12/12.
+ * https://github.com/Jokerblazes/serviceRegistration.git
  */
 
 public class CustomerHeartBeatReqHandler extends SimpleChannelInboundHandler<Object> {
+    private final static Logger logger = LoggerFactory.getLogger(CustomerHeartBeatReqHandler.class);
+
     private final ProviderPO provider;
 
     public CustomerHeartBeatReqHandler(ProviderPO provider) {
@@ -29,20 +35,19 @@ public class CustomerHeartBeatReqHandler extends SimpleChannelInboundHandler<Obj
         Message message = (Message) msg;
         // 握手成功，主动发送心跳消息
         if (message.getCmdType() == MessageType.Login.value() && message.getOpStatus() == MessageType.Success.value()) {
+            logger.info("消费者客户端开启定时心跳任务！");
             heartBeat = ctx.executor().scheduleAtFixedRate(
                     new CustomerHeartBeatReqHandler.HeartBeatTask(ctx), 0, 80000,
                     TimeUnit.MILLISECONDS);
 //            BlockingQueue<Message> queue = provider.getQueue();
+            logger.info("消费者客户端开启等待服务端消息！");
             Storage<Message> storage = provider.getStorage();
-
             MessageDestroyer messageDestroyer = new MessageDestroyer(storage,ctx);
             ctx.channel().eventLoop().parent().execute(messageDestroyer);
 //            ctx.executor().next().execute(messageDestroyer);
 //            ctx.executor().execute(messageDestroyer);
         } else if (message.getCmdType() == MessageType.HEARTBEAT.value() && message.getOpStatus() == MessageType.Success.value()) {
-            System.out
-                    .println("CustomerClient receive server heart beat message : ---> "
-                            + message);
+            logger.info("消费者客户端收到服务端的心跳回复消息！{}",message);
         } else
             ctx.fireChannelRead(msg);
     }
@@ -58,9 +63,7 @@ public class CustomerHeartBeatReqHandler extends SimpleChannelInboundHandler<Obj
 
         public void run() {
             Message heatBeat = buildHeatBeat();
-            System.out
-                    .println("CustomerClient send heart beat messsage to server : ---> "
-                            + heatBeat);
+            logger.info("消费者客户端发送心跳消息！{}",heartBeat);
             ctx.writeAndFlush(heatBeat);
         }
 
@@ -81,6 +84,7 @@ public class CustomerHeartBeatReqHandler extends SimpleChannelInboundHandler<Obj
             throws Exception {
         cause.printStackTrace();
         if (heartBeat != null) {
+            logger.error("消费者客户端开始取消未执行的心跳任务！");
             heartBeat.cancel(true);
             heartBeat = null;
         }

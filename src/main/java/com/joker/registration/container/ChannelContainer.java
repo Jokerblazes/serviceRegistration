@@ -1,21 +1,18 @@
 package com.joker.registration.container;
 
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.*;
 
 /**
- *
+ * Channel容器类
  * Created by joker on 2017/12/9.
  */
-public class ActionContainer<T> {
-    private static ActionContainer container = new ActionContainer();
+public class ChannelContainer<T> {
+    private static ChannelContainer container = new ChannelContainer();
 
-    private ActionContainer() {}
+    private ChannelContainer() {}
 
-    public static ActionContainer getContainer() {
+    public static ChannelContainer getContainer() {
         return container;
     }
 

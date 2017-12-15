@@ -23,6 +23,7 @@ import java.awt.*;
 import java.util.List;
 
 /**
+ * 消费者-服务者客户端
  * Created by joker on 2017/12/8.
  */
 public class CustomerClient {

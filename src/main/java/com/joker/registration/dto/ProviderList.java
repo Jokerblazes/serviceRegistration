@@ -1,11 +1,18 @@
 package com.joker.registration.dto;
 
+import entity.NonEmpty;
 import org.msgpack.annotation.Message;
 
 
+/**
+ * 生产者list
+ * https://github.com/Jokerblazes/serviceRegistration.git
+ */
 @Message
 public class ProviderList {
+    @NonEmpty
     private Provider[] providers;
+    @NonEmpty
     private String serviceName;
 
 

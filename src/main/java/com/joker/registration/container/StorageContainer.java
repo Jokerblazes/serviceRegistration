@@ -6,7 +6,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
+ * 有界缓存容器
  * Created by joker on 2017/12/12.
+ * https://github.com/Jokerblazes/serviceRegistration.git
  */
 public class StorageContainer {
     private static StorageContainer container = new StorageContainer();

@@ -3,7 +3,9 @@ package com.joker.registration.dto;
 import org.msgpack.annotation.Message;
 
 /**
+ * 生产者对象
  * Created by joker on 2017/12/7.
+ * https://github.com/Jokerblazes/serviceRegistration.git
  */
 @Message
 public class Provider {

@@ -7,7 +7,9 @@ import com.joker.registration.dto.Provider;
 import java.util.Random;
 
 /**
+ * 随机策略
  * Created by joker on 2017/12/8.
+ * https://github.com/Jokerblazes/serviceRegistration.git
  */
 public class RandomStrategy implements ChooseStrategy {
     private final Random random;

@@ -9,22 +9,26 @@ import io.netty.channel.ChannelHandlerContext;
 
 
 /**
+ * 生产者对象
  * Created by joker on 2017/12/8.
+ * https://github.com/Jokerblazes/serviceRegistration.git
  */
 public class ProviderPO {
+    private ChannelHandlerContext ctx;//channel上下文
+    private Node node;//节点
+    private String serviceName;//服务名
+
+    private Storage<Message> storage;//有界缓存
+
     public ProviderPO(Provider provider) {
+        this(provider,10);
+    }
+    public ProviderPO(Provider provider,int capacity) {
         this.node = provider.getNode();
         this.serviceName = provider.getServiceName();
-        this.storage = new Storage<Message>(10);
-//        this.queue = messageQueue;
+        this.storage = new Storage<Message>(capacity);
     }
 
-
-    private ChannelHandlerContext ctx;
-    private Node node;
-    private String serviceName;
-//    private volatile BlockingQueue<Message> queue;
-    private Storage<Message> storage;
 
     public String getServiceName() {
         return serviceName;
@@ -58,9 +62,6 @@ public class ProviderPO {
         this.storage = storage;
     }
 
-    //    public BlockingQueue<Message> getQueue() {
-//        return queue;
-//    }
 
 
 }

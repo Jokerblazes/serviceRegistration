@@ -8,6 +8,8 @@ import org.msgpack.MessagePack;
 public final class MessagePackageFactory {
 	private final static MessagePack messagePack = new MessagePack();
 	public static Object bytesToEntity(byte[] bytes,Class clazz) {
+		if (bytes == null)
+			return null;
 		try {
 			return messagePack.read(bytes,clazz);
 		} catch (IOException e) {

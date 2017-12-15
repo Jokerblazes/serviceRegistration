@@ -5,7 +5,9 @@ import com.joker.registration.entity.Storage;
 
 
 /**
+ * 生产者-生成message放入缓存
  * Created by joker on 2017/12/12.
+ * https://github.com/Jokerblazes/serviceRegistration.git
  */
 public class MessageCreater implements Runnable {
     private final Message message;

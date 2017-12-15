@@ -2,12 +2,9 @@ package com.joker.registration.handler;
 
 import com.joker.agreement.entity.Message;
 import com.joker.agreement.entity.MessageType;
-import com.joker.registration.Client;
 import com.joker.registration.CustomerClient;
 import com.joker.registration.container.ProviderContainer;
 import com.joker.registration.container.ProviderPO;
-import com.joker.registration.dto.CustomerDTO;
-import com.joker.registration.dto.Node;
 import com.joker.registration.dto.Provider;
 import com.joker.registration.dto.ProviderList;
 import com.joker.registration.utils.ClientType;
@@ -15,18 +12,23 @@ import com.joker.registration.utils.MessagePackageFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
-
-import java.util.concurrent.ArrayBlockingQueue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import util.CheckUntils;
 
 
 /**
+ * 客户端注册类
  * Created by joker on 2017/12/8.
+ * https://github.com/Jokerblazes/serviceRegistration.git
  */
 public class RegistHandler extends SimpleChannelInboundHandler<Object> {
-    private final int flag;
+    private static final Logger logger = LoggerFactory.getLogger(RegistHandler.class);
+
+    private final int flag;//消费者 or 生产者
     private final Object dto;
-    private final EventLoopGroup group;
-    private final EventLoopGroup bossGroup;
+    private final EventLoopGroup group;//工作线程组
+    private final EventLoopGroup bossGroup;//主线程组
 
     public RegistHandler(int flag,Object dto,EventLoopGroup group,EventLoopGroup bossGroup) {
         this.flag = flag;
@@ -38,6 +40,7 @@ public class RegistHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        logger.info("建立新的链路-注册链路{}",ctx);
         ctx.writeAndFlush(buildRegist());
     }
 
@@ -47,19 +50,36 @@ public class RegistHandler extends SimpleChannelInboundHandler<Object> {
         //URI singleService provider
         if (flag == ClientType.CUSTOMER.value()) {
             Message message = (Message) msg;
-            String uri = new String(message.getHead().getUrl());
+            byte[] bytes = message.getHead().getUrl();
+            String uri = null;
+            if (bytes != null)
+                uri = new String(bytes);
             ProviderContainer container = ProviderContainer.getInstance();
             if ("serviceList".equals(uri)) {
                 ProviderList list = (ProviderList) MessagePackageFactory.bytesToEntity(message.getOptionData(), ProviderList.class);
+                logger.info("首次获取生产者list{}",list);
+                //检查对象是否为空
+                if (!CheckUntils.checkNull(list)) {
+                    throw new RuntimeException("没有对应的生成者！");
+                }
                 Provider[] providers = list.getProviders();
                 int length = providers.length;
                 for (int i = 0 ; i < length ; i++)
                     addProvider(ctx,providers[i],container,group);
             } else if ("singleAdd".equals(uri)) {
                 Provider provider = (Provider) MessagePackageFactory.bytesToEntity(message.getOptionData(), Provider.class);
+                //检查对象是否为空
+                if (!CheckUntils.checkNull(provider)) {
+                    logger.error("注册中心返回生产者为空！新增操作失败！");
+//                    throw new RuntimeException("注册中心返回生产者为空！新增操作失败！");
+                }
                 addProvider(ctx,provider,container,group);
             } else {
                 Provider provider = (Provider) MessagePackageFactory.bytesToEntity(message.getOptionData(), Provider.class);
+                if (!CheckUntils.checkNull(provider)) {
+                    logger.error("注册中心返回生产者为空！删除操作失败！");
+//                    throw new RuntimeException("注册中心返回生产者为空！删除操作失败！");
+                }
                 container.removeProvider(provider);
             }
         }
@@ -69,6 +89,10 @@ public class RegistHandler extends SimpleChannelInboundHandler<Object> {
 
     private Message buildRegist() {
         Message message = null;
+        if (!CheckUntils.checkNull(dto)) {
+//            logger.error("对象有非空对象为空！");
+            throw new RuntimeException("对象有非空对象为空！");
+        }
         if (flag == ClientType.CUSTOMER.value()) {
             byte[] bytes = MessagePackageFactory.entityToBytes(dto);
             message = Message.messageResult(bytes, MessageType.Success.value(),"");
@@ -84,10 +108,8 @@ public class RegistHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     private void addProvider(ChannelHandlerContext ctx,Provider provider,ProviderContainer container,EventLoopGroup group) {
-        if (provider == null)
-            return;
-//        final int capacity = 20;
-//        final ProviderPO providerPO = new ProviderPO(provider,new ArrayBlockingQueue<Message>(20));
+//        if (provider == null)
+//            return;
         final ProviderPO providerPO = new ProviderPO(provider);
         Runnable runnable = createRunnable(providerPO,group);
         bossGroup.execute(runnable);
@@ -108,4 +130,9 @@ public class RegistHandler extends SimpleChannelInboundHandler<Object> {
         return runnable;
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        super.exceptionCaught(ctx, cause);
+        logger.error(cause.getMessage() + "{}",ctx);
+    }
 }

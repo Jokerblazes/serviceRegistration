@@ -5,9 +5,11 @@ import io.netty.channel.ChannelHandlerContext;
 import rx.functions.Action1;
 
 /**
+ * 存储channel上下文和消息
  * Created by joker on 2017/12/12.
+ * https://github.com/Jokerblazes/serviceRegistration.git
  */
-public class MessageAction {
+public class MessageChannel {
 //    private final Action1 action1;
 //    private final Message message;
 //
@@ -27,7 +29,7 @@ public class MessageAction {
     private final ChannelHandlerContext ctx;
     private final Message message;
 
-    public MessageAction(ChannelHandlerContext ctx, Message message) {
+    public MessageChannel(ChannelHandlerContext ctx, Message message) {
         this.ctx = ctx;
         this.message = message;
     }

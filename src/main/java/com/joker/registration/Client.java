@@ -17,34 +17,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 注册客户端
  * Created by joker on 2017/12/8.
+ * https://github.com/Jokerblazes/serviceRegistration.git
  */
 public class Client {
 
-//    public Client(int flag,Provider provider) {
-//        this.registHandler = new RegistHandler(flag,provider);
-//    }
-    private Channel channel;
     public Client(int flag,Object dto,EventLoopGroup group,EventLoopGroup bossGroup) {
         this.registHandler = new RegistHandler(flag,dto,group,bossGroup);
         this.group = group;
-//        this.bossGroup = bossGroup;
     }
 
     private EventLoopGroup group;
-
+    private Channel channel;
 //    private EventLoopGroup bossGroup;
     private final RegistHandler registHandler;
-
+    private boolean init = false;
 
     public Client initProviderMap(List<String> serviceName) {
         ProviderContainer container = ProviderContainer.getInstance();
         container.initMap(serviceName);
+        init = true;
         return this;
     }
 
     public void connect(String host,int port) throws Exception {
-
+        if (!init)
+            throw new RuntimeException("请先调用initProviderMap方法！");
         // 配置客户端NIO线程组
         try {
             Bootstrap b = new Bootstrap();
