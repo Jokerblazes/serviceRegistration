@@ -8,7 +8,7 @@ import org.msgpack.annotation.Message;
  * https://github.com/Jokerblazes/serviceRegistration.git
  */
 @Message
-public class Provider {
+public class ProviderDTO {
     private Node node;
     private String serviceName;
 
@@ -26,5 +26,13 @@ public class Provider {
 
     public void setNode(Node node) {
         this.node = node;
+    }
+
+    @Override
+    public String toString() {
+        return "ProviderDTO{" +
+                "node=" + node +
+                ", serviceName='" + serviceName + '\'' +
+                '}';
     }
 }

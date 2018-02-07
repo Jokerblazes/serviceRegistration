@@ -1,4 +1,4 @@
-package com.joker.registration.handler;
+package com.joker.registration.client.handler;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;

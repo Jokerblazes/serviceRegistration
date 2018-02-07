@@ -1,8 +1,7 @@
-package com.joker.registration.strategy;
+package com.joker.registration.client.strategy;
 
 import com.joker.registration.container.ProviderPO;
 import com.joker.registration.container.ProviderSet;
-import com.joker.registration.dto.Provider;
 
 import java.util.Random;
 

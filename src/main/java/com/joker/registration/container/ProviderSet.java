@@ -1,11 +1,7 @@
 package com.joker.registration.container;
 
-import com.joker.registration.dto.Provider;
-import com.joker.registration.strategy.ChooseStrategy;
-import com.joker.registration.strategy.PollingChooseStrategy;
-import com.joker.registration.strategy.RandomStrategy;
-
-import java.util.Random;
+import com.joker.registration.client.strategy.ChooseStrategy;
+import com.joker.registration.client.strategy.PollingChooseStrategy;
 
 
 /**

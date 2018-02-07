@@ -1,7 +1,9 @@
 package com.joker.registration.container;
 
 
-import com.joker.registration.dto.Provider;
+import com.joker.registration.dto.ProviderDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,11 +25,14 @@ public class ProviderContainer {
     private final ConcurrentMap<String,ProviderSet> map = new ConcurrentHashMap<String, ProviderSet>();
     private final Boolean isUse = false;
 
+    private final static Logger logger = LoggerFactory.getLogger(ProviderContainer.class);
+
     /**
      * 初始化容器
      * @param serviceNames
      */
     public void initMap(List<String> serviceNames) {
+        logger.info("初始化生产者容器 {}",serviceNames);
         if (serviceNames == null)
             throw new RuntimeException("初始化入参不允许为空！");
         if (serviceNames.size() == 0)
@@ -56,6 +61,7 @@ public class ProviderContainer {
      * @param provider
      */
     public void addProvider(ProviderPO provider) {
+        logger.info("添加Provider {}到容器中",provider);
         ProviderSet providerSet = map.get(provider.getServiceName());
         if (providerSet == null)
             throw new RuntimeException("没有对应的服务！");
@@ -66,7 +72,7 @@ public class ProviderContainer {
      * 移除服务生产者
      * @param provider
      */
-    public void removeProvider(Provider provider) {
+    public void removeProvider(ProviderDTO provider) {
         ProviderSet providerSet = map.get(provider.getServiceName());
         if (providerSet == null)
             throw new RuntimeException("没有对应的服务可被移除！");
@@ -78,6 +84,7 @@ public class ProviderContainer {
      * @param serviceName
      * @return
      */
+    //TODO 需要修改获取生产者的策略
     public ProviderPO getProvider(String serviceName) {
         ProviderSet set = map.get(serviceName);
         if (set == null)

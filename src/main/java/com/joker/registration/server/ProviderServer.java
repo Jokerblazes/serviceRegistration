@@ -1,13 +1,14 @@
-package com.joker.registration;
+package com.joker.registration.server;
 
 
 import com.joker.agreement.codec.MessageDecoder;
 import com.joker.agreement.codec.MessageEncoder;
 import com.joker.agreement.entity.MessageConstant;
 import com.joker.agreement.handler.HeartBeatHandler;
-import com.joker.registration.dto.Provider;
-import com.joker.registration.handler.ServiceDeal;
-import com.joker.registration.handler.ServiceHandler;
+import com.joker.registration.client.Client;
+import com.joker.registration.dto.ProviderDTO;
+import com.joker.registration.server.handler.ServiceDeal;
+import com.joker.registration.server.handler.ServiceHandler;
 import com.joker.registration.utils.ClientType;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -22,7 +23,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
 public class ProviderServer {
-	public void start(Provider provider, final ServiceDeal deal,String registionIp,int registionPort) {
+	public void start(ProviderDTO provider, final ServiceDeal deal, String registionIp, int registionPort) {
 //		final int registionPort = 8001;
 //		final String registionIp = "127.0.0.1";
 

@@ -1,11 +1,11 @@
-package com.joker.registration.handler;
+package com.joker.registration.server.handler;
 
 import com.joker.agreement.entity.Message;
 import com.joker.agreement.entity.MessageType;
-import com.joker.registration.CustomerClient;
+import com.joker.registration.client.CustomerClient;
 import com.joker.registration.container.ProviderContainer;
 import com.joker.registration.container.ProviderPO;
-import com.joker.registration.dto.Provider;
+import com.joker.registration.dto.ProviderDTO;
 import com.joker.registration.dto.ProviderList;
 import com.joker.registration.utils.ClientType;
 import com.joker.registration.utils.MessagePackageFactory;
@@ -26,7 +26,7 @@ public class RegistHandler extends SimpleChannelInboundHandler<Object> {
     private static final Logger logger = LoggerFactory.getLogger(RegistHandler.class);
 
     private final int flag;//消费者 or 生产者
-    private final Object dto;
+    private final Object dto; //消费者 or 生产者实体
     private final EventLoopGroup group;//工作线程组
     private final EventLoopGroup bossGroup;//主线程组
 
@@ -62,12 +62,12 @@ public class RegistHandler extends SimpleChannelInboundHandler<Object> {
                 if (!CheckUntils.checkNull(list)) {
                     throw new RuntimeException("没有对应的生成者！");
                 }
-                Provider[] providers = list.getProviders();
+                ProviderDTO[] providers = list.getProviders();
                 int length = providers.length;
                 for (int i = 0 ; i < length ; i++)
                     addProvider(ctx,providers[i],container,group);
             } else if ("singleAdd".equals(uri)) {
-                Provider provider = (Provider) MessagePackageFactory.bytesToEntity(message.getOptionData(), Provider.class);
+                ProviderDTO provider = (ProviderDTO) MessagePackageFactory.bytesToEntity(message.getOptionData(), ProviderDTO.class);
                 //检查对象是否为空
                 if (!CheckUntils.checkNull(provider)) {
                     logger.error("注册中心返回生产者为空！新增操作失败！");
@@ -75,7 +75,7 @@ public class RegistHandler extends SimpleChannelInboundHandler<Object> {
                 }
                 addProvider(ctx,provider,container,group);
             } else {
-                Provider provider = (Provider) MessagePackageFactory.bytesToEntity(message.getOptionData(), Provider.class);
+                ProviderDTO provider = (ProviderDTO) MessagePackageFactory.bytesToEntity(message.getOptionData(), ProviderDTO.class);
                 if (!CheckUntils.checkNull(provider)) {
                     logger.error("注册中心返回生产者为空！删除操作失败！");
 //                    throw new RuntimeException("注册中心返回生产者为空！删除操作失败！");
@@ -107,32 +107,50 @@ public class RegistHandler extends SimpleChannelInboundHandler<Object> {
         return message;
     }
 
-    private void addProvider(ChannelHandlerContext ctx,Provider provider,ProviderContainer container,EventLoopGroup group) {
+    /**
+        super.exceptionCaught(ctx, cause);
+        logger.error(cause.getMessage() + "{}",ctx);
+     * 添加生产者
+     * @param ctx
+     * @param provider
+     * @param container
+     * @param group
+     */
+    private void addProvider(ChannelHandlerContext ctx,ProviderDTO provider,ProviderContainer container,EventLoopGroup group) {
         if (provider == null)
             return;
         final ProviderPO providerPO = new ProviderPO(provider);
+        logger.info("添加生产者:{}",providerPO);
         Runnable runnable = createRunnable(providerPO,group);
         bossGroup.execute(runnable);
+
         container.addProvider(providerPO);
     }
 
+
     Runnable createRunnable(final ProviderPO providerPO,EventLoopGroup group) {
-        final CustomerClient client = new CustomerClient(group);
+        final CustomerClient client = new CustomerClient(group,providerPO);
+        logger.info("消费者客户端 {}",client);
         Runnable runnable = new Runnable() {
             public void run() {
-                try {
-                    client.connect(providerPO.getNode().getIp(),providerPO.getNode().getPort(),providerPO);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                int capacity = providerPO.getCapacity();
+                for (int i = 0; i < capacity; i++) {
+                    try {
+                        client.connect();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
         return runnable;
     }
 
+
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         super.exceptionCaught(ctx, cause);
         logger.error(cause.getMessage() + "{}",ctx);
     }
+
 }

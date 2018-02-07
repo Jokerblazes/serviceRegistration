@@ -3,6 +3,8 @@ package com.joker.registration.dto;
 import entity.NonEmpty;
 import org.msgpack.annotation.Message;
 
+import java.util.Arrays;
+
 
 /**
  * 生产者list
@@ -11,7 +13,7 @@ import org.msgpack.annotation.Message;
 @Message
 public class ProviderList {
     @NonEmpty
-    private Provider[] providers;
+    private ProviderDTO[] providers;
     @NonEmpty
     private String serviceName;
 
@@ -19,12 +21,12 @@ public class ProviderList {
     public ProviderList() {
     }
 
-    public ProviderList(Provider[] providers, String serviceName) {
+    public ProviderList(ProviderDTO[] providers, String serviceName) {
         this.providers = providers;
         this.serviceName = serviceName;
     }
 
-    public Provider[] getProviders() {
+    public ProviderDTO[] getProviders() {
         return providers;
     }
 
@@ -32,11 +34,19 @@ public class ProviderList {
         return serviceName;
     }
 
-    public void setProviders(Provider[] providers) {
+    public void setProviders(ProviderDTO[] providers) {
         this.providers = providers;
     }
 
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
+    }
+
+    @Override
+    public String toString() {
+        return "ProviderList{" +
+                "providers=" + Arrays.toString(providers) +
+                ", serviceName='" + serviceName + '\'' +
+                '}';
     }
 }

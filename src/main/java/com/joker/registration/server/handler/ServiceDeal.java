@@ -1,4 +1,4 @@
-package com.joker.registration.handler;
+package com.joker.registration.server.handler;
 
 import com.joker.agreement.entity.Message;
 import io.netty.channel.ChannelHandlerContext;

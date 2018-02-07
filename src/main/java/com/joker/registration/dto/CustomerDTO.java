@@ -33,5 +33,11 @@ public class CustomerDTO {
         this.node = node;
     }
 
-
+    @Override
+    public String toString() {
+        return "CustomerDTO{" +
+                "node=" + node +
+                ", serviceNames=" + serviceNames +
+                '}';
+    }
 }

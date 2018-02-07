@@ -1,12 +1,10 @@
-package com.joker.registration.handler;
+package com.joker.registration.client.handler;
 
 import com.joker.agreement.entity.Head;
 import com.joker.agreement.entity.Message;
 import com.joker.agreement.entity.MessageConstant;
 import com.joker.agreement.entity.MessageType;
 import com.joker.registration.container.ProviderPO;
-import com.joker.registration.entity.Storage;
-import com.joker.registration.runnable.MessageDestroyer;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
@@ -41,9 +39,9 @@ public class CustomerHeartBeatReqHandler extends SimpleChannelInboundHandler<Obj
                     TimeUnit.MILLISECONDS);
 //            BlockingQueue<Message> queue = provider.getQueue();
             logger.info("消费者客户端开启等待服务端消息！");
-            Storage<Message> storage = provider.getStorage();
-            MessageDestroyer messageDestroyer = new MessageDestroyer(storage,ctx);
-            ctx.channel().eventLoop().parent().execute(messageDestroyer);
+//            Storage<Message> storage = provider.getStorage();
+//            MessageDestroyer messageDestroyer = new MessageDestroyer(storage,ctx);
+//            ctx.channel().eventLoop().parent().execute(messageDestroyer);
 //            ctx.executor().next().execute(messageDestroyer);
 //            ctx.executor().execute(messageDestroyer);
         } else if (message.getCmdType() == MessageType.HEARTBEAT.value() && message.getOpStatus() == MessageType.Success.value()) {
@@ -88,7 +86,21 @@ public class CustomerHeartBeatReqHandler extends SimpleChannelInboundHandler<Obj
             heartBeat.cancel(true);
             heartBeat = null;
         }
+        exceptionalProcess(ctx);
         ctx.fireExceptionCaught(cause);
     }
+
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        logger.info("链接断开 {}",ctx.channel().toString());
+        exceptionalProcess(ctx);
+    }
+
+    private void exceptionalProcess(ChannelHandlerContext ctx) {
+        logger.info("从provider {}中移除对应的连接 {}",provider,ctx);
+        provider.removeCtx(ctx);
+    }
+
 
 }
